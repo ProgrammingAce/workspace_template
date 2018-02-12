@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :aws do |aws, override|
     aws.keypair_name = ENV['AWS_KEYNAME'] 
     aws.region = "us-east-1"
-    aws.ami = "ami-a4827dc9"
+    aws.ami = "ami-97785bed"
     aws.subnet_id = ""
     aws.instance_type = "t2.medium"
     aws.security_groups = ""
