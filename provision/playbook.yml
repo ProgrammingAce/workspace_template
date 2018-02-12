@@ -2,6 +2,9 @@
 
 - hosts: all
   become: yes
+  # Uncomment and set git path if you'd like to install your dot files from a repo
+  # vars:
+  #   dotfile_repo_path: git@github.com:...
   tasks:
     - name: Install software
       yum:
@@ -23,12 +26,44 @@
         - irssi
         - "@Development tools"
 
-    - name: Install elastic beanstalk cli
+    - name: Install pip packages
       pip:
-        name=awsebcli
-
+        name={{ item }}
+      with_items:
+        - awscli
+        
     - name: Install ecs-cli
       get_url:
         url=https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest
         dest=/usr/local/bin/ecs-cli
         mode=0555
+
+    # Uncomment the block below to pull your dot files from another repo and install them with 
+    #     symlinks to the proper locations 
+    # - name: Checkout dotfile repo
+    #   git:
+    #     repo={{ dotfile_repo_path }}
+    #     dest=~/.dotfiles
+    #     accept_hostkey=true
+    #   become: no
+
+    # - name: Symlink dotfiles
+    #   file:
+    #     src=~/.dotfiles/{{ item.src }}
+    #     dest=~/{{ item.dest }}
+    #     state=link
+    #     force=yes
+    #   with_items:
+    #     - { src: 'vim',                dest: '.vim' }
+    #     - { src: 'viminfo',            dest: '.viminfo' }
+    #     - { src: 'vimrc',              dest: '.vimrc' }
+    #     - { src: 'irssi',              dest: '.irssi' }
+    #     - { src: 'bashrc.linux',       dest: '.bashrc' }
+    #     - { src: 'ssh_config',       dest: '.ssh/config' }
+    #   become: no
+
+    # - name: Create directory for vim temp files
+    #   file:
+    #     path: ~/.VIM_UNDO_FILES
+    #     state: directory
+    #   become: no
